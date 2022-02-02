@@ -1,0 +1,82 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <h5>{{ name }}</h5>
+    <div class="row">
+
+    <div class="col-sm-4">
+    {% if name == request.user.username %}
+    {% else %}
+    <button id="follow-btn" class="btn btn-danger btn-sm" value="{{name}}">Follow</button>
+    <button id="unfollow-btn" class="btn btn-danger btn-sm" value="{{name}}">Unfollow</button>
+    {% endif %}
+    </div>
+    <div class="col-sm-4">
+    <h5 id="count">{{ follower_count }} Followers</h5>
+    </div>
+    <div class="col-sm-4">
+    <h5>{{ following_count }} Following</h5>
+    </div>
+    
+    </div><hr>
+    
+    
+    <div id="index-view">
+    {% for post in posts %}
+    <div class="card">
+        <div class="card-header">
+            <strong>{{ post.user }}</strong>
+        </div>
+        <div class="card-body">
+            <h5 id="post{{post.id}}">{{ post.post_content }}</h5>
+            <p>{{ post.timestamp }}</p>
+            <p id="count{{post.id}}">{{ post.like_count }} Likes </p>
+            <button id="like-btn" class="btn btn-primary btn-sm" value="{{ post.id }}">Like</button>
+            {% if post.user == request.user.username %}
+            <button id="edit-btn" class="btn btn-danger btn-sm" value="{{ post.id }}">Edit Post</button>
+            {% endif %}
+        </div>
+    </div>
+    <br>
+    {% endfor %}
+
+
+
+    
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+        {% if posts.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+        {% endif %}
+
+        {% for i in posts.paginator.page_range %}
+        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+        {% endfor %}
+
+        {% if posts.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}">Next</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">Next</span></li>
+        {% endif %}
+        </ul>
+    </nav>
+    </div>
+
+    <div id="edit-view">
+        <h2>Edit Post</h2>
+        <form id="edit-form">
+            <div class="form-group">
+                <textarea id="edit-body" class="form-control" name="post_content" rows="10"></textarea>
+            </div>
+            <button class="btn btn-primary btn-block">Update Post</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/edit.js' %}"></script>
+    <script src="{% static 'network/connect.js' %}"></script>
+{% endblock %}
